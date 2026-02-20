@@ -1,6 +1,3 @@
-"""
-Core Agent Implementation using LangGraph and MCP
-"""
 import os
 import asyncio
 from typing import Annotated, Sequence, Literal
@@ -23,9 +20,6 @@ from tool.github_direct import get_github_tools
 
 
 console = Console()
-
-
-
 
 class AgentState(BaseModel):
     """State management for the agent workflow"""
@@ -257,7 +251,7 @@ class CodeAssistantAgent:
         
         for tool_call in tool_calls:
             tool_name = tool_call["name"]
-            tool_args = tool_call["args"]
+            tool_args = tool_call.get("args", {})  # Get args with default value
             
             # Display tool execution
             self.console.print(f"\n[bold yellow]Executing tool:[/bold yellow] [magenta]{tool_name}[/magenta]")
@@ -291,7 +285,7 @@ class CodeAssistantAgent:
                     tool_messages.append(
                         ToolMessage(
                             content=str(result),
-                            tool_call_id=tool_call["id"]
+                            tool_call_id=tool_call.get("id", "")  # Get id with default value
                         )
                     )
                 except Exception as e:
@@ -301,7 +295,7 @@ class CodeAssistantAgent:
                     tool_messages.append(
                         ToolMessage(
                             content=error_msg,
-                            tool_call_id=tool_call["id"]
+                            tool_call_id=tool_call.get("id", "")  # Get id with default value
                         )
                     )
             else:
@@ -311,7 +305,7 @@ class CodeAssistantAgent:
                 tool_messages.append(
                     ToolMessage(
                         content=error_msg,
-                        tool_call_id=tool_call["id"]
+                        tool_call_id=tool_call.get("id", "")  # Get id with default value
                     )
                 )
         
